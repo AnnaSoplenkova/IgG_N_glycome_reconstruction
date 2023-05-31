@@ -1,0 +1,77 @@
+#!/bin/bash
+options=$(getopt -o 'h' -l 'project:,data:,out:,norm:,harm:,tmp:,help,dt' -- "$@")
+[ $? -eq 0 ] || {
+	echo "Incorrect option provided"
+}
+eval set -- "$options"
+
+unset options
+while true; do
+	case "$1" in
+		'--project')
+			project_name='--project '$2
+			shift 2
+			continue
+		;;
+		'--data')
+			path_to_data='--data '$(realpath $2)
+			input_dir=$(echo $(realpath $2) | grep -Poe '.+/')
+			shift 2
+			continue
+		;;
+		'--out')
+			output_dir=$(realpath $2)
+			out='--out '$output_dir
+			shift 2
+			continue
+		;;
+		'--norm')
+			norm_type='--norm '$2
+			shift 2
+			continue
+		;;
+		'--harm')
+			harm_rules='--harm='$2
+			shift 2
+			continue
+		;;
+		'--tmp')
+			tmp_dir=$(realpath $2)
+			tmp='--tmp '$tmp_dir
+			shift 2
+			continue
+		;;
+		'-h'|'--help')
+			help='-h '
+			shift
+			continue
+		;;
+		'--dt')
+			echo "Option dt"
+			derived='--dt '
+			echo derived traits will be calculated
+			shift 1
+			continue
+		;;
+		'--')
+			shift
+			break
+		;;
+		*)
+			echo 'getopt error!' >&2
+			exit 1
+		;;
+	esac
+done
+
+singularity run \
+	--bind $input_dir,$output_dir,$tmp_dir \
+	/home/common/projects/glycomics/GlycomeQC/tiys_git/Singularity/GlycomeQC.simg \
+	$project_name \
+	$path_to_data \
+	$out \
+	$norm_type \
+	$harm_rules \
+	$tmp \
+	$help \
+	$dt
