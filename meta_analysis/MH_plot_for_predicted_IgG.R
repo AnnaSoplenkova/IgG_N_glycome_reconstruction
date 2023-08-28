@@ -1,4 +1,4 @@
-# MH plot for predicted IgG on MA plasma 10k EUR
+# MH plot for predicted IgG on MA plasma 7k EUR
 
 library(data.table)
 library(qqman)
