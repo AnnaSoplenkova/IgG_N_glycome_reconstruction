@@ -1,0 +1,3 @@
+Клампинг для 9 пиков (которые образуют 8 наилучших пиков в предсказанном ИгГ)
+
+run_clumping_snps --gwas-ids=1282648,1282651,1282654,1282633,1282634,1282635,1282636,1282637,1282640  --pval=5.55555556e-9 --maf=0.01 --output-path=/home/soplenkova/polyomica/projects/GPD/result_ma/IgG_OLS/clumped_snps_real_IGG_9peaks_10k.txt
