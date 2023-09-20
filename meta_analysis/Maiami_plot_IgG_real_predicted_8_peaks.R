@@ -1,0 +1,52 @@
+#Miami plot
+
+library(data.table)
+library(qqman)
+
+predicted_IgG = fread("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/IgG_8peaks_pvals_predicted_on_10k.csv")
+
+IgG_gwas_pred = data.frame(BP = predicted_IgG$bp, CHR = predicted_IgG$chr, P = predicted_IgG$p_min, SNP = predicted_IgG$rs_id)
+IgG_gwas_pred_lite = IgG_gwas_pred[IgG_gwas_pred$P < 0.001,]
+nrow(IgG_gwas_pred_lite)
+
+
+real_IgG = fread("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/IgG_24peaks_pvals_real.csv")
+vect = c(3,6,9:14,17)
+names_p = paste("pval", vect)
+names = c("SNP", "chr", "bp", names_p)
+
+real_IgG = real_IgG[,..names]
+real_IgG$p_min <- do.call(pmin, real_IgG[, ..names_p])
+
+IgG_gwas_real = data.frame(BP = real_IgG$bp, CHR = real_IgG$chr, P = real_IgG$p_min, SNP = real_IgG$SNP)
+IgG_gwas_real = IgG_gwas_real[!is.na(IgG_gwas_real$BP),]
+IgG_gwas_real = IgG_gwas_real[!is.na(IgG_gwas_real$P),]
+IgG_gwas_real_lite = IgG_gwas_real[IgG_gwas_real$P < 0.001,]
+nrow(IgG_gwas_real_lite)
+
+pdf("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/Maiami_plot_IgG_real_predicted_8_peaks.pdf", width = 16, height = 9)
+par(mfrow=c(2,1))
+par(mar=c(0,5,3,3))
+manhattan(IgG_gwas_pred_lite,ylim=c(0,70),cex=2.2,cex.lab=2.5,font.lab=2,font.axis=2,cex.axis=1.6,las=2,font=4,
+          chr="CHR", bp="BP", snp="SNP", p="P", col = c("#606060FF", "#D6ED17FF"),
+          suggestiveline = -log10(5e-08), genomewideline = -log10(5e-08/8))
+par(mar=c(5,5,3,3))
+manhattan(IgG_gwas_real_lite,ylim=c(70,0),cex=2.2,cex.lab=2.5,font.lab=2,font.axis=2,cex.axis=1.6,
+          las=2,font=4,xlab="",xaxt="n",
+          chr="CHR", bp="BP", snp="SNP", p="P", col = c("#5a613e", "#27d1a6"),
+          suggestiveline = -log10(5e-08), genomewideline = -log10(5e-08/9))
+dev.off()
+
+
+svg("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/Maiami_plot_IgG_real_predicted_8_peaks.svg", width = 16, height = 9)
+par(mfrow=c(2,1))
+par(mar=c(0,5,3,3))
+manhattan(IgG_gwas_pred_lite,ylim=c(0,70),cex=2.2,cex.lab=2.5,font.lab=2,font.axis=2,cex.axis=1.6,las=2,font=4,
+          chr="CHR", bp="BP", snp="SNP", p="P", col = c("#606060FF", "#D6ED17FF"),
+          suggestiveline = -log10(5e-08), genomewideline = -log10(5e-08/8))
+par(mar=c(5,5,3,3))
+manhattan(IgG_gwas_real_lite,ylim=c(70,0),cex=2.2,cex.lab=2.5,font.lab=2,font.axis=2,cex.axis=1.6,
+          las=2,font=4,xlab="",xaxt="n",
+          chr="CHR", bp="BP", snp="SNP", p="P", col = c("#5a613e", "#27d1a6"),
+          suggestiveline = -log10(5e-08), genomewideline = -log10(5e-08/9))
+dev.off()
