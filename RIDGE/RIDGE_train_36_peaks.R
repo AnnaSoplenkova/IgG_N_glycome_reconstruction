@@ -19,38 +19,35 @@ names(IgG_train)[-(1:3)] = paste0(names(IgG_train),"_IgG")[-(1:3)]
 names(plasma_train)[-(1:3)] = paste0(names(plasma_train),"_plasma")[-(1:3)]
 train_set = left_join(plasma_train, IgG_train)
 
-#RIDGE
 IgG_names = names(train_set)[endsWith(names(train_set), "IgG")]
 plasma_names = names(train_set)[endsWith(names(train_set), "plasma")]
 
 
-best_lambda = rep(NA, 22)
+###############################
+##### functions for RIDGE #####
+###############################
 
-for (i in 1:22) {
-  y = as.matrix(train_set[, ..IgG_names])[,i]
-  
-  #perform k-fold cross-validation to find optimal lambda value
-  cv_model <- cv.glmnet(x = as.matrix(train_set[, ..plasma_names]),
-                        y, alpha = 0)
-  #find optimal lambda value that minimizes test MSE
-  best_lambda[i] <- cv_model$lambda.min
-}
-
-
-
-#res = sapply(1:22, RIDGE, train = train, test = test)
-
-# function for RIDGE
-RIDGE = function(i, train, test) {
+BestLambda = function(i, train) {
   plasma = as.matrix(train[, ..plasma_names])
   IgG = as.matrix(train[, ..IgG_names])[,i]
-  
-  test_plasma = as.matrix(test[, ..plasma_names])
   
   #perform k-fold cross-validation to find optimal lambda value
   cv_model <- cv.glmnet(x = plasma, y = IgG, alpha = 0)
   #find optimal lambda value that minimizes test MSE
   best_lambda <- cv_model$lambda.min
+  
+  return(best_lambda)
+}
+
+
+# function for RIDGE
+RIDGE = function(i, train, test, lambda) {
+  
+  plasma = as.matrix(train[, ..plasma_names])
+  IgG = as.matrix(train[, ..IgG_names])[,i]
+  best_lambda = lambda[i]
+  
+  test_plasma = as.matrix(test[, ..plasma_names])
   
   best_model <- glmnet(x = plasma, y = IgG, alpha = 0, lambda = best_lambda)
   coef(best_model)
@@ -62,17 +59,13 @@ RIDGE = function(i, train, test) {
 } 
 
 #draw RIDGE plot (actual/predict)
-RIDGE_plot = function(i, train, test) {
+RIDGE_plot = function(i, train, test, lambda) {
   
   plasma = as.matrix(train[, ..plasma_names])
   IgG = as.matrix(train[, ..IgG_names])[,i]
+  best_lambda = lambda[i]
   
   test_plasma = as.matrix(test[, ..plasma_names])
-  
-  #perform k-fold cross-validation to find optimal lambda value
-  cv_model <- cv.glmnet(x = plasma, y = IgG, alpha = 0)
-  #find optimal lambda value that minimizes test MSE
-  best_lambda <- cv_model$lambda.min
   
   best_model <- glmnet(x = plasma, y = IgG, alpha = 0, lambda = best_lambda)
   coef(best_model)
@@ -92,14 +85,10 @@ RIDGE_plot = function(i, train, test) {
 }
 
 
-RIDGE_coefs = function(i, train) {
+RIDGE_coefs = function(i, train, lambda) {
   plasma = as.matrix(train[, ..plasma_names])
   IgG = as.matrix(train[, ..IgG_names])[,i]
-  
-  #perform k-fold cross-validation to find optimal lambda value
-  cv_model <- cv.glmnet(x = plasma, y = IgG, alpha = 0)
-  #find optimal lambda value that minimizes test MSE
-  best_lambda <- cv_model$lambda.min
+  best_lambda = lambda[i]
   
   best_model <- glmnet(x = plasma, y = IgG, alpha = 0, lambda = best_lambda)
   coef = coef(best_model)
@@ -113,7 +102,10 @@ RIDGE_coefs = function(i, train) {
 }
 
 
-#кросс-валидация 5 частей
+####################################
+##### кросс-валидация 5 частей #####
+####################################
+
 set.seed(111)
 N = floor(nrow(train_set)*.2)
 
@@ -135,21 +127,28 @@ df5<-rest[-dt,]
 
 df = list(df1,df2,df3,df4,df5)
 
-#запускаю с кросс-валидацией
+#######################################
+##### запускаю с кросс-валидацией #####
+#######################################
+
 list_coefs = list()
 for (i in 1:5) {
   test = df[[i]]
   train = do.call(rbind, df[-i])
-  coeffs = lapply(1:22, RIDGE_coefs, train = train)
+  
+  lambda = lapply(1:22, BestLambda, train = train)
+  lambda = unlist(lambda)
+  
+  coeffs = lapply(1:22, RIDGE_coefs, train = train, lambda = lambda)
   coeffs = do.call(cbind,coeffs)
   
-  res = sapply(1:22, RIDGE, train = train, test = test)
+  res = sapply(1:22, RIDGE, train = train, test = test, lambda = lambda)
   res = as.data.frame(t(res))
   
   if (i == 1) {
     RES = res
     names(RES) = paste0(names(RES),"_set",i)
-    plot_list = lapply(1:22, RIDGE_plot, train = train, test = test) }
+    plot_list = lapply(1:22, RIDGE_plot, train = train, test = test, lambda = lambda) }
   if (i %in% 2:5) {
     names(res) = paste0(names(res),"_set",i)
     RES = cbind(RES, res)
@@ -171,7 +170,10 @@ Mean_coefs = Mean_coefs[match(target, Mean_coefs$rowname),
 list_coefs[[6]] = Mean_coefs
 names(list_coefs) = c(1:5, "Mean_coefs")
 
-#вывожу средние от статистик по 5 запускам
+#####################################################
+##### вывожу средние от статистик по 5 запускам #####
+#####################################################
+
 RES$rmse = apply(RES[,startsWith(names(RES), "rmse")],1,mean)
 RES$rel_err = apply(RES[,startsWith(names(RES), "rel_err")],1,function(x) {mean(abs(x))})
 RES$pearson = apply(RES[,startsWith(names(RES), "pearson")],1,mean)
