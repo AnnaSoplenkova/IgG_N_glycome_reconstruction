@@ -29,7 +29,8 @@ plasma_names = names(train_set)[endsWith(names(train_set), "plasma")]
 BestLambda = function(i, train) {
   plasma = as.matrix(train[, ..plasma_names])
   IgG = as.matrix(train[, ..IgG_names])[,i]
-  
+
+  set.seed(111)
   #perform k-fold cross-validation to find optimal lambda value
   cv_model <- cv.glmnet(x = plasma, y = IgG, alpha = 1)
   #find optimal lambda value that minimizes test MSE
