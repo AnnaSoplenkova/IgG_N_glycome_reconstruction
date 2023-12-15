@@ -11,8 +11,11 @@ library(tibble)
 setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 
 # беру тренировочные сеты
-plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
-IgG_train = fread("data/IgG_training_set_2023.csv")
+#plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
+#IgG_train = fread("data/IgG_training_set_2023.csv")
+plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
+IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
+
 # merge 2 datasets in one
 names(IgG_train)[-(1:3)] = paste0(names(IgG_train),"_IgG")[-(1:3)]
 names(plasma_train)[-(1:3)] = paste0(names(plasma_train),"_plasma")[-(1:3)]
