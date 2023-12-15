@@ -182,13 +182,15 @@ RES$pearson = apply(RES[,startsWith(names(RES), "pearson")],1,mean)
 RES$spearman = apply(RES[,startsWith(names(RES), "spearman")],1,mean)
 rownames(RES) = IgG_names
 
-write.xlsx(RES, "LASSO/stats.xlsx", row.names = T)
+write.xlsx(RES, "LASSO/stats.xlsx", rowNames = T)
 
 wb <- createWorkbook()
-sheetnames <- names(list_coefs)
-sheets <- lapply(sheetnames, createSheet, wb = wb)
-void <- Map(addDataFrame, list_coefs, sheets)
-saveWorkbook(wb, 'LASSO/coeffs.xlsx')
+sheetnames <- as.character(names(list_coefs))
+sheets <- lapply(sheetnames, addWorksheet, wb = wb)
+for (i in 1:length(sheetnames)) {
+  writeData(wb, sheet = sheetnames[i], x = list_coefs[[i]])
+}
+saveWorkbook(wb, 'LASSO/coeffs.xlsx', overwrite = T)
 
 pdf('LASSO/plot_actual_predict_mq.pdf')
 marrangeGrob(grobs = plot_list, ncol = 1, nrow = 2)
