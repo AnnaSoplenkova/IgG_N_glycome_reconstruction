@@ -14,6 +14,8 @@ setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 # беру тренировочные сеты
 plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
 IgG_train = fread("data/IgG_training_set_2023.csv")
+plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
+IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
 
 # merge 2 datasets in one
 names(IgG_train)[-(1:3)] = paste0(names(IgG_train),"_IgG")[-(1:3)]
@@ -35,8 +37,8 @@ ensr_obj_summary <- summary(object = ensr_obj)
 BestAlpha = ensr_obj_summary[cvm == min(cvm), 5]
 
 #plot(ensr_obj, type = 1)
- 
- 
+
+
 BestLambda = function(i, train) {
   plasma = as.matrix(train[, ..plasma_names])
   IgG = as.matrix(train[, ..IgG_names])[,i]
@@ -191,13 +193,15 @@ RES$pearson = apply(RES[,startsWith(names(RES), "pearson")],1,mean)
 RES$spearman = apply(RES[,startsWith(names(RES), "spearman")],1,mean)
 rownames(RES) = IgG_names
 
-write.xlsx(RES, "ELASTIC_NET/stats.xlsx", row.names = T)
+write.xlsx(RES, "ELASTIC_NET/stats.xlsx", rowNames = T)
 
 wb <- createWorkbook()
-sheetnames <- names(list_coefs)
-sheets <- lapply(sheetnames, createSheet, wb = wb)
-void <- Map(addDataFrame, list_coefs, sheets)
-saveWorkbook(wb, 'ELASTIC_NET/coeffs.xlsx')
+sheetnames <- as.character(names(list_coefs))
+sheets <- lapply(sheetnames, addWorksheet, wb = wb)
+for (i in 1:length(sheetnames)) {
+  writeData(wb, sheet = sheetnames[i], x = list_coefs[[i]], rowNames = T)
+}
+saveWorkbook(wb, 'ELASTIC_NET/coeffs.xlsx', overwrite = T)
 
 pdf('ELASTIC_NET/plot_actual_predict_mq.pdf')
 marrangeGrob(grobs = plot_list, ncol = 1, nrow = 2)
