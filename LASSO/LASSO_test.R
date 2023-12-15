@@ -10,8 +10,10 @@ library(tibble)
 setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 
 # беру тестовые сеты
-plasma_test = fread("data/plasma_test_set_36peaks_2023.csv")
-IgG_test = fread("data/IgG_test_set_2023.csv")
+#plasma_test = fread("data/plasma_test_set_36peaks_2023.csv")
+#IgG_test = fread("data/IgG_test_set_2023.csv")
+plasma_test = fread("data/plasma_test_set_36peaks_2023_sex_age.csv")
+IgG_test = fread("data/IgG_test_set_2023_sex_age.csv")
 
 
 # беру коэффициенты
