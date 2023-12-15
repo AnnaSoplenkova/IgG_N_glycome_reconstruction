@@ -12,8 +12,8 @@ library(tibble)
 setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 
 # беру тренировочные сеты
-plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
-IgG_train = fread("data/IgG_training_set_2023.csv")
+#plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
+#IgG_train = fread("data/IgG_training_set_2023.csv")
 plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
 IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
 
