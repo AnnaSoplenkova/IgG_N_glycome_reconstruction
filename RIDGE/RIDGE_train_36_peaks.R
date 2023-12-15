@@ -11,8 +11,10 @@ library(tibble)
 setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 
 # беру тренировочные сеты
-plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
-IgG_train = fread("data/IgG_training_set_2023.csv")
+#plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
+#IgG_train = fread("data/IgG_training_set_2023.csv")
+plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
+IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
 
 # merge 2 datasets in one
 names(IgG_train)[-(1:3)] = paste0(names(IgG_train),"_IgG")[-(1:3)]
@@ -181,13 +183,16 @@ RES$pearson = apply(RES[,startsWith(names(RES), "pearson")],1,mean)
 RES$spearman = apply(RES[,startsWith(names(RES), "spearman")],1,mean)
 rownames(RES) = IgG_names
 
-write.xlsx(RES, "RIDGE/stats.xlsx", row.names = T)
+write.xlsx(RES, "RIDGE/stats.xlsx", , rowNames = T)
 
 wb <- createWorkbook()
-sheetnames <- names(list_coefs)
-sheets <- lapply(sheetnames, createSheet, wb = wb)
-void <- Map(addDataFrame, list_coefs, sheets)
-saveWorkbook(wb, 'RIDGE/coeffs.xlsx')
+sheetnames <- as.character(names(list_coefs))
+sheets <- lapply(sheetnames, addWorksheet, wb = wb)
+for (i in 1:length(sheetnames)) {
+  writeData(wb, sheet = sheetnames[i], x = list_coefs[[i]], rowNames = T)
+}
+saveWorkbook(wb, 'RIDGE/coeffs.xlsx', overwrite = T)
+
 
 pdf('RIDGE/plot_actual_predict_mq.pdf')
 marrangeGrob(grobs = plot_list, ncol = 1, nrow = 2)
