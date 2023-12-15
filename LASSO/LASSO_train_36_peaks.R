@@ -188,7 +188,7 @@ wb <- createWorkbook()
 sheetnames <- as.character(names(list_coefs))
 sheets <- lapply(sheetnames, addWorksheet, wb = wb)
 for (i in 1:length(sheetnames)) {
-  writeData(wb, sheet = sheetnames[i], x = list_coefs[[i]])
+  writeData(wb, sheet = sheetnames[i], x = list_coefs[[i]], rowNames = T)
 }
 saveWorkbook(wb, 'LASSO/coeffs.xlsx', overwrite = T)
 
