@@ -10,15 +10,19 @@ setwd("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS")
 peaks = c(3,6,9,10,11,12,13,16)
 
 read_files = function(i) {
-  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/10k_IGP_",i,".csv")
+  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/clean/10k_IGP_",i,"_clean_done.csv")
   res = fread(file_name)
   return(res)
 }
 
 df_list = lapply(peaks, read_files)
 
+for (i in 1:length(peaks)) {
+  df_list[[i]]$trait = paste0("IGP_", peaks[i])
+}
+
 ## add a column with minimal sample size across all GWASes for each snp 
-size.list <- lapply(df_list, subset, select = c(rs_id, chr, bp,trait, Pval))
+size.list <- lapply(df_list, subset, select = c(rs_id, chr, bp,trait, p))
 names(size.list) <- seq(1:length(size.list))
 size.list_2 <- lapply(seq_along(size.list), function(i) {colnames(size.list[[i]])[4] <- paste("trait", names(size.list)[i])
 colnames(size.list[[i]])[5] <- paste("pval", names(size.list)[i])
