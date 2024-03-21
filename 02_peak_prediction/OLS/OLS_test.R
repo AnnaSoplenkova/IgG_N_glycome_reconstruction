@@ -12,8 +12,10 @@ setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 # беру тестовые сеты
 #plasma_test = fread("data/plasma_test_set_36peaks_2023.csv")
 #IgG_test = fread("data/IgG_test_set_2023.csv")
-plasma_test = fread("data/plasma_test_set_36peaks_2023_sex_age.csv")
-IgG_test = fread("data/IgG_test_set_2023_sex_age.csv")
+plasma_test = fread("data/plasma_test_set_36peaks_2023_sex_age_merge45.csv")
+IgG_test = fread("data/IgG_test_set_2023_sex_age_merge45.csv")
+#plasma_test = fread("data/plasma_test_set_36peaks_2023_sex_age.csv")
+#IgG_test = fread("data/IgG_test_set_2023_sex_age.csv")
 
 # беру коэффициенты
 coeffs = openxlsx::read.xlsx("OLS/coeffs.xlsx", sheet = 6)[-1]
