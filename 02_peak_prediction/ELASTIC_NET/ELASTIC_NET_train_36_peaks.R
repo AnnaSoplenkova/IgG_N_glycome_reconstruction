@@ -14,8 +14,12 @@ setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 # беру тренировочные сеты
 #plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
 #IgG_train = fread("data/IgG_training_set_2023.csv")
-plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
-IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
+plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age_merge45.csv")
+IgG_train = fread("data/IgG_training_set_2023_sex_age_merge45.csv")
+#plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
+#IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
+
+n_igg = 21
 
 # merge 2 datasets in one
 names(IgG_train)[-(1:3)] = paste0(names(IgG_train),"_IgG")[-(1:3)]
@@ -47,7 +51,7 @@ BestLambda = function(i, train) {
   #perform k-fold cross-validation to find optimal lambda value
   cv_model <- cv.glmnet(x = plasma, y = IgG, alpha = BestAlpha)
   #find optimal lambda value that minimizes test MSE
-  best_lambda <- cv_model$lambda.min
+  best_lambda <- cv_model$lambda.1se
   
   return(best_lambda)
 }
@@ -149,19 +153,19 @@ for (i in 1:5) {
   test = df[[i]]
   train = do.call(rbind, df[-i])
   
-  lambda = lapply(1:22, BestLambda, train = train)
+  lambda = lapply(1:n_igg, BestLambda, train = train)
   lambda = unlist(lambda)
   
-  coeffs = lapply(1:22, ELASTIC_NET_coefs, train = train, lambda = lambda)
+  coeffs = lapply(1:n_igg, ELASTIC_NET_coefs, train = train, lambda = lambda)
   coeffs = do.call(cbind,coeffs)
   
-  res = sapply(1:22, ELASTIC_NET, train = train, test = test, lambda = lambda)
+  res = sapply(1:n_igg, ELASTIC_NET, train = train, test = test, lambda = lambda)
   res = as.data.frame(t(res))
   
   if (i == 1) {
     RES = res
     names(RES) = paste0(names(RES),"_set",i)
-    plot_list = lapply(1:22, ELASTIC_NET_plot, train = train, test = test, lambda = lambda) }
+    plot_list = lapply(1:n_igg, ELASTIC_NET_plot, train = train, test = test, lambda = lambda) }
   if (i %in% 2:5) {
     names(res) = paste0(names(res),"_set",i)
     RES = cbind(RES, res)
