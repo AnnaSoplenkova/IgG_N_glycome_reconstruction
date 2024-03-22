@@ -13,8 +13,10 @@ setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 # беру тренировочные сеты
 #plasma_train = fread("data/plasma_training_set_36peaks_2023.csv")
 #IgG_train = fread("data/IgG_training_set_2023.csv")
-plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
-IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
+plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age_merge45.csv")
+IgG_train = fread("data/IgG_training_set_2023_sex_age_merge45.csv")
+#plasma_train = fread("data/plasma_training_set_36peaks_2023_sex_age.csv")
+#IgG_train = fread("data/IgG_training_set_2023_sex_age.csv")
 
 # merge 2 datasets in one
 names(IgG_train)[-(1:3)] = paste0(names(IgG_train),"_IgG")[-(1:3)]
@@ -118,7 +120,7 @@ main_function = function(train, test) {
     return(c(rmse = rmse(x,y), rel_err = mean(abs(x-y)/x),
              pearson = cor(x,y), spearman = cor(x,y,method = "spearman")) )
   }
-
+  
   N = ncol(pred_IgG)
   res_list = lapply(1:N, metrics)
   res = do.call(rbind, res_list)
@@ -172,7 +174,7 @@ for (i in 1:5) {
     names(res) = paste0(names(res),"_set",i)
     RES = cbind(RES, res)
   }
-
+  
 }
 
 RES$rmse = apply(RES[,startsWith(names(RES), "rmse")],1,mean)
