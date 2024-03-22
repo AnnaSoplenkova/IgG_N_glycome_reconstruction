@@ -12,9 +12,10 @@ setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 # беру тестовые сеты
 #plasma_test = fread("data/plasma_test_set_36peaks_2023.csv")
 #IgG_test = fread("data/IgG_test_set_2023.csv")
-plasma_test = fread("data/plasma_test_set_36peaks_2023_sex_age.csv")
-IgG_test = fread("data/IgG_test_set_2023_sex_age.csv")
-
+plasma_test = fread("data/plasma_test_set_36peaks_2023_sex_age_merge45.csv")
+IgG_test = fread("data/IgG_test_set_2023_sex_age_merge45.csv")
+#plasma_test = fread("data/plasma_test_set_36peaks_2023_sex_age.csv")
+#IgG_test = fread("data/IgG_test_set_2023_sex_age.csv")
 
 # беру коэффициенты
 coeffs = openxlsx::read.xlsx("LASSO/coeffs.xlsx", sheet = 6)[-1]
@@ -62,8 +63,8 @@ stats = function(name, x, y) {
 
 
 stats_list = lapply(1:length(IgG_names), function(i) {stats(IgG_names[i],
-                                                                x = as.data.frame(test_set[,..IgG_names])[,i],
-                                                                y = predict_IgG[,i])})
+                                                            x = as.data.frame(test_set[,..IgG_names])[,i],
+                                                            y = predict_IgG[,i])})
 
 stats = do.call(rbind, stats_list)
 rownames(stats) = IgG_names
