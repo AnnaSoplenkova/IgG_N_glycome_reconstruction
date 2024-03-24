@@ -1,3 +1,5 @@
+#CCA + plot actual/predict on test set with 36 plasma peaks
+
 # generates IgG summary statistics from a linear combination of plasma summary statistics 10k
 # main function from https://github.com/Defrag1236/MV_IGG/blob/master/3K_replication/MANOVA_6snps/04-replicating_linear_combinations_coefficeints.R
 
@@ -45,7 +47,7 @@ GWAS_linear_combination=function(a,beta,se1,vary1=1,covm,N){
 pgp = function(i) {
   dataFiles[[i]]$gwas_id = paste0("pgp", i) 
   return(dataFiles[[i]])
-  }
+}
 
 dataFiles = lapply(1:36, pgp)
 dataFiles[[1]]
@@ -101,18 +103,18 @@ rm(list.betas)
 rm(dataFiles)
 rm(size.list)
 rm(size.list_2)
-IgG_peak_list = lapply(1:22, IgG_peak)
+IgG_peak_list = lapply(1:21, IgG_peak)
 
 
 make_res_list = function(i) {
   IgG_peak_list[[i]] = as.data.table(left_join(IgG_peak_list[[i]], betas.se.N[,c(1, 39)]))
 }
 
-res_list = lapply(1:22, make_res_list)
+res_list = lapply(1:21, make_res_list)
 
 save_df = function(i) {
   file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/10k_IGP_",i,".csv")
   fwrite(res_list[[i]], file_name)
 }
 
-lapply(1:22,save_df)
+lapply(1:21,save_df)
