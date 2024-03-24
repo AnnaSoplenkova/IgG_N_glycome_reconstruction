@@ -7,10 +7,12 @@ setwd("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS")
 
 
 #порог - пирсон 88%
-peaks = c(3,6,9,10,11,12,13,16)
+peaks = c(3,4,5,9,10,11,12,15)
+n_peaks = length(peaks)
 
 read_files = function(i) {
-  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/clean/10k_IGP_",i,"_clean_done.csv")
+  #file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/clean/10k_IGP_",i,"_clean_done.csv")
+  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/10k_IGP_",i,".csv")
   res = fread(file_name)
   return(res)
 }
@@ -21,6 +23,9 @@ for (i in 1:length(peaks)) {
   df_list[[i]]$trait = paste0("IGP_", peaks[i])
 }
 
+df_list = lapply(df_list, function(df) {names(df)[names(df) == "Pval"] = "p"
+  return(df)})
+  
 ## add a column with minimal sample size across all GWASes for each snp 
 size.list <- lapply(df_list, subset, select = c(rs_id, chr, bp,trait, p))
 names(size.list) <- seq(1:length(size.list))
@@ -38,18 +43,18 @@ size.list.m[is.na(size.list.m$p_min),]
 size.list.m = size.list.m[!is.na(size.list.m$p_min),]
 size.list.m$main_trait<-traits[unlist(apply(size.list.m[, ..pvals],1,which.min))]
 
-fwrite(size.list.m, "/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/IgG_8peaks_pvals_predicted_on_10k.csv")
+fwrite(size.list.m, "/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/IgG_8peaks_pvals_predicted_on_10k_r2_0.75.csv")
 
 IgG_gwas = data.frame(BP = size.list.m$bp, CHR = size.list.m$chr, P = size.list.m$p_min, SNP = size.list.m$rs_id)
 IgG_gwas_lite = IgG_gwas[IgG_gwas$P < 0.001,]
 nrow(IgG_gwas_lite)
 
-pdf("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/MH_10k.pdf", width = 16, height = 9)
+pdf("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/MH_10k_r2_0.75.pdf", width = 16, height = 9)
 manhattan(IgG_gwas_lite, chr="CHR", bp="BP", snp="SNP", p="P", col = c("#606060FF", "#D6ED17FF"),
-          suggestiveline = F, genomewideline = -log10(5e-08/8))
+          suggestiveline = F, genomewideline = -log10(5e-08/n_peaks))
 dev.off() 
 
-svg("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/MH_10k.svg", width = 16, height = 9)
+svg("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/MH_10k_r2_0.75.svg", width = 16, height = 9)
 manhattan(IgG_gwas_lite, chr="CHR", bp="BP", snp="SNP", p="P", col = c("#606060FF", "#D6ED17FF"),
-          suggestiveline = F, genomewideline = -log10(5e-08/8))
+          suggestiveline = F, genomewideline = -log10(5e-08/n_peaks))
 dev.off() 
