@@ -6,7 +6,7 @@ library(qqman)
 setwd("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS")
 
 
-#порог - пирсон 88%
+#порог - r2 75%
 peaks = c(3,4,5,9,10,11,12,15)
 n_peaks = length(peaks)
 
