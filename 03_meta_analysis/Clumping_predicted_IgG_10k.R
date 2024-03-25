@@ -1,4 +1,3 @@
-
 function_for_shlop_28_12_2017 <- function(locus_table,p_value="Pval",pos="bp",snp="rs_id",                                                                                                                         
                                           delta=2.5e5,chr="chr",thr=5e-8,trait=NULL){                                                                                                                                 
   
@@ -57,13 +56,14 @@ function_for_shlop_28_12_2017 <- function(locus_table,p_value="Pval",pos="bp",sn
 
 library(data.table)
 
+
+
+
+#порог - пирсон 80%
+peaks = c(2,3,4,5,7,8,9,10,11,12,15,20)
+
 out <- NULL
-thr <- 5e-8/8
-
-
-#порог - пирсон 88%
-peaks = c(3,6,9,10,11,12,13,16)
-
+thr <- 5e-8/length(peaks)
 
 for (i in peaks) {
   file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/10k_IGP_",i,".csv")
@@ -86,4 +86,4 @@ str(bt)
 bt$trait <- as.character(bt$trait)
 str(bt)
 library(openxlsx)
-write.xlsx(bt, "/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/PG_MA_loci_table_IgG_pred_10k.xlsx")
+write.xlsx(bt, "/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/Clumping_MA_loci_table_IgG_pred_10k_pearson08.xlsx")
