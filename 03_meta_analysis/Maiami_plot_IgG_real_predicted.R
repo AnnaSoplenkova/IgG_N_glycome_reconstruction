@@ -3,7 +3,7 @@
 library(data.table)
 library(qqman)
 
-predicted_IgG = fread("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/IgG_8peaks_pvals_predicted_on_10k.csv")
+predicted_IgG = fread("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/IgG_8peaks_pvals_predicted_on_10k_pearson_0.8.csv")
 
 IgG_gwas_pred = data.frame(BP = predicted_IgG$bp, CHR = predicted_IgG$chr, P = predicted_IgG$p_min, SNP = predicted_IgG$rs_id)
 IgG_gwas_pred_lite = IgG_gwas_pred[IgG_gwas_pred$P < 0.001,]
