@@ -1,0 +1,13 @@
+   "collection":"Synthetic_IGG",
+   "study_year":2024,
+   "population":"European",
+   "study_website_link":"none",
+    "reference_doi":"none",
+   "n_people":10172,
+   "genomic_build":"hg19/GRCh37",
+   "association_type":"linear",
+   "association_metric":"beta",
+   "genetic_model":"additive",
+   "imputation_reference":"1000G p1 v3",
+   "access_restrictions":["private"]
+}

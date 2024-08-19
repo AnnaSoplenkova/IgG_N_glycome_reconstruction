@@ -1,0 +1,21 @@
+{
+    "levels":
+    [
+   {
+        "chr":"{u_chr}",
+      "rs_id":"{u_rs_id}",
+      "bp":"{u_bp}",
+        "b":"{u_beta}",
+        "Pval":"{u_p}",
+        "Z":"{u_z}",
+        "se":"{u_se}",
+        "N_min":"{u_n}",
+        "ea":"{u_ea}",
+        "ra":"{u_ra}",
+        "eaf_ma":"{u_eaf}"
+   }
+    ],
+    "service":{
+   "sep":","
+   }
+}
