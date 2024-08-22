@@ -14,7 +14,7 @@ extra = extra[,1:6]
 
 
 for (i in 1:21) {
-  list[[i]] = left_join(list[[1]], extra)
+  list[[i]] = left_join(list[[i]], extra)
 }
 
 for (i in 1:21) {
