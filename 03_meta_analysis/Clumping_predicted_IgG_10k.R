@@ -60,26 +60,29 @@ library(data.table)
 
 
 #порог - пирсон 80%
-peaks = c(2,3,4,5,7,8,9,10,11,12,15,20)
+peaks = c(2:5,7:12,15,20)
 
 out <- NULL
 thr <- 5e-8/length(peaks)
 
+
+
 for (i in peaks) {
-  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/10k_IGP_",i,".csv")
+  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/unification_out/igp",i,"/igp",i,"_done.csv")
   sst <- fread(file_name, header=T, stringsAsFactors = F, data.table=F)
-  sst <- sst[!is.na(sst$Pval),]
+  sst <- sst[!is.na(sst$p),]
+  sst$gwas_id = rep(paste0("igp_",i), nrow(sst))
   #sst_sm <- sst[(pmin(sst$eaf_ma,1-sst$eaf_ma)>=0.01),]
   #sst_sm <- sst_sm[sst_sm$n_ma>=(7500*0.9),]
-  lt <- function_for_shlop_28_12_2017(sst,p_value="Pval",pos="bp",snp="rs_id", delta=2.5e5,chr="chr", thr=thr)
+  lt <- function_for_shlop_28_12_2017(sst,p_value="p",pos="bp",snp="rs_id", delta=2.5e5,chr="chr", thr=thr)
   if (nrow(lt)>0 ) {
     #lt=cbind(lt,trait)
     out=rbind(out,lt)
   }
 }
-
+head(out)
 dim(out)
-bt <- function_for_shlop_28_12_2017(out,trait="trait",p_value="Pval",pos="bp",snp="rs_id",delta=6e5,chr="chr")
+bt <- function_for_shlop_28_12_2017(out,trait="gwas_id",p_value="p",pos="bp",snp="rs_id",delta=6e5,chr="chr")
 bt <- bt[order(bt$chr,bt$bp),]
 colnames(bt)
 str(bt)
