@@ -8,7 +8,7 @@ coefs = read.xlsx("OLS/coeffs.xlsx")
 
 IgG_coef = names(coefs)[startsWith(names(coefs), "Estimate")]
 
-names = paste0("/mnt/polyomica/projects/plasma_v2/11_EUR_META/01_GWAS_MAP/PGP", 1:36, "/pgp", 1:36, ".csv")
+names = paste0("/mnt/polyomica/projects/plasma_v2/11_EUR_META/01_GWAS_MAP/01_upload_data/02_unification_out/pgp", 1:36, "/pgp", 1:36, "_done.csv")
 
 dataFiles <- lapply(names, fread)
 print("downloading files now finished")
@@ -18,14 +18,14 @@ dataFiles[[1]]
 snp_info = subset(dataFiles[[1]], select = c(rs_id,chr,bp))
 
 pgp = function(i) {
-  dataFiles[[i]]$gwas_id = paste0("pgp", i) 
+  dataFiles[[i]]$gwas_id = rep(paste0("pgp", i), nrow(dataFiles[[i]]) )
   return(dataFiles[[i]])
 }
 
 dataFiles = lapply(1:36, pgp)
 
 p.select <- function(mydata){
-  pvals <- subset(mydata, select = c( rs_id, p_ma))
+  pvals <- subset(mydata, select = c( rs_id, p))
   gwas.id <- unique(mydata$gwas_id)
   colnames(pvals)[2] <- paste("p", gwas.id, sep ="_")
   return(pvals)
@@ -56,4 +56,3 @@ svg("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/MH_plasma_10k.svg", width = 1
 manhattan(plasma_gwas_lite, chr="CHR", bp="BP", snp="SNP", p="P", col = c("#606060FF", "#B1009B"),
           suggestiveline = F, genomewideline = -log10(5e-08/28))
 dev.off() 
-
