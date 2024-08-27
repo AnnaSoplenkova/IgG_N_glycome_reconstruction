@@ -3,6 +3,8 @@
 library(data.table)
 library(qqman)
 
+#renv::install("MASS@7.3-60")
+
 setwd("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS")
 
 
@@ -12,7 +14,7 @@ n_peaks = length(peaks)
 
 read_files = function(i) {
   #file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/clean/10k_IGP_",i,"_clean_done.csv")
-  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/10k_IGP_",i,".csv")
+  file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/unification_out/igp",i,"/igp",i,"_done.csv")
   res = fread(file_name)
   return(res)
 }
@@ -23,9 +25,8 @@ for (i in 1:length(peaks)) {
   df_list[[i]]$trait = paste0("IGP_", peaks[i])
 }
 
-df_list = lapply(df_list, function(df) {names(df)[names(df) == "Pval"] = "p"
-  return(df)})
-  
+df_list[[1]]
+
 ## add a column with minimal sample size across all GWASes for each snp 
 size.list <- lapply(df_list, subset, select = c(rs_id, chr, bp,trait, p))
 names(size.list) <- seq(1:length(size.list))
