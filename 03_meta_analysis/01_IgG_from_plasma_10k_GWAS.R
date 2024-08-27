@@ -13,7 +13,13 @@ coefs = read.xlsx("OLS/coeffs.xlsx")
 
 IgG_coef = names(coefs)[startsWith(names(coefs), "Estimate")]
 
-names = paste0("/mnt/polyomica/projects/plasma_v2/11_EUR_META/01_GWAS_MAP/PGP", 1:36, "/pgp", 1:36, ".csv")
+#фильтрованные
+names = paste0("/mnt/polyomica/projects/plasma_v2/11_EUR_META/01_GWAS_MAP/01_upload_data/02_unification_out/pgp", 1:36, "/pgp", 1:36, "_done.csv")
+#нефильтрованные
+#names = paste0("/mnt/polyomica/projects/plasma_v2/11_EUR_META/01_GWAS_MAP/PGP", 1:36, "/pgp", 1:36, ".csv")
+
+a = fread(names[1])
+eaf_dt = subset(a, select = c(rs_id,chr,bp, ea,ra,eaf))
 
 dataFiles <- lapply(names, fread)
 print("downloading files now finished")
@@ -45,16 +51,16 @@ GWAS_linear_combination=function(a,beta,se1,vary1=1,covm,N){
 }
 
 pgp = function(i) {
-  dataFiles[[i]]$gwas_id = paste0("pgp", i) 
+  dataFiles[[i]]$gwas_id = rep(paste0("pgp", i), nrow(dataFiles[[i]]))
   return(dataFiles[[i]])
 }
 
 dataFiles = lapply(1:36, pgp)
-dataFiles[[1]]
+dataFiles[[5]]
 
 ## combine all snp effects into one dataframe
 betas.select <- function(mydata){
-  betas <- subset(mydata, select = c( rs_id, beta_ma))
+  betas <- subset(mydata, select = c( rs_id, beta))
   gwas.id <- unique(mydata$gwas_id)
   colnames(betas)[2] <- paste("beta", gwas.id, sep ="_")
   return(betas)
@@ -63,13 +69,13 @@ betas.select <- function(mydata){
 list.betas  <- lapply(dataFiles, betas.select)
 tmp <- Reduce(left_join, list.betas)
 
-se_gwas1 <- subset(dataFiles[[1]], select = c(rs_id, se_ma))
+se_gwas1 <- subset(dataFiles[[1]], select = c(rs_id, se))
 tmp_1 <- left_join(tmp, se_gwas1)
 colnames(tmp_1)[ncol(tmp_1)] <- "se_gwas1"
 
 
 ## add a column with minimal sample size across all GWASes for each snp 
-size.list <- lapply(dataFiles, subset, select = c(rs_id, n_ma))
+size.list <- lapply(dataFiles, subset, select = c(rs_id, n))
 names(size.list) <- seq(1:length(size.list))
 size.list_2 <- lapply(seq_along(size.list), function(i) {colnames(size.list[[i]])[2] <- paste("n", names(size.list)[i]) 
 size.list[[i]]})
@@ -112,9 +118,17 @@ make_res_list = function(i) {
 
 res_list = lapply(1:21, make_res_list)
 
+make_res_list_1 = function(i) {
+  res_list[[i]] = as.data.table(left_join(res_list[[i]], eaf_dt))
+}
+
+res_list_1 = lapply(1:21, make_res_list_1)
+
 save_df = function(i) {
   file_name = paste0("/mnt/polyomica/projects/GPD/result_ma/IgG_OLS/10k_IGP_",i,".csv")
-  fwrite(res_list[[i]], file_name)
+  fwrite(res_list_1[[i]], file_name)
 }
 
 lapply(1:21,save_df)
+
+res_list_1[[1]]
