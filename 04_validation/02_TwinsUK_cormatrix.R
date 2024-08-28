@@ -1,4 +1,4 @@
-код рисует хитмап для тестовой выборки (плазма и ИгГ)
+#код рисует хитмап для тестовой выборки (плазма и ИгГ)
 
 library(corrplot)
 library(openxlsx)
@@ -21,6 +21,10 @@ nrow(train_set)
 head(train_set)
 
 corrected_to_gender_age <- train_set[, -(1:3)]
+
+good_igg = c(2:5,7:12,15,20)
+names = c(paste0("plasma_", 1:36), paste0("IgG_", good_igg))
+corrected_to_gender_age = corrected_to_gender_age[,names(corrected_to_gender_age) %in% names]
 
 cor_matrix = as.matrix(cor(corrected_to_gender_age))
 
