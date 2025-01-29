@@ -2,13 +2,15 @@ library(data.table)
 library(dplyr)
 
 
-setwd("/mnt/polyomica/projects/GPD/peak_prediction")
+setwd("/mnt/polyomica/projects/GPD/training_set")
 
 # беру сеты
-plasma_train = as.data.frame(fread("data/plasma_training_set_36peaks_2023.csv"))
-IgG_train = as.data.frame(fread("data/IgG_training_set_2023.csv"))
-plasma_test = as.data.frame(fread("data/plasma_test_set_36peaks_2023.csv"))
-IgG_test = as.data.frame(fread("data/IgG_test_set_2023.csv"))
+plasma_train = as.data.frame(fread("plasma_training_set_36peaks_merge45_2023.csv"))
+IgG_train = as.data.frame(fread("IgG_training_set_merge45_2023.csv"))
+
+setwd("/mnt/polyomica/projects/GPD/test_set")
+plasma_test = as.data.frame(fread("plasma_test_set_36peaks_merge45_2023.csv"))
+IgG_test = as.data.frame(fread("IgG_test_set_merge45_2023.csv"))
 
 df = plasma_train
 denominator = df$GP1 + df$GP2 + df$GP3 + df$GP4 + df$GP5 + df$GP6 + df$GP7 + df$GP8 + df$GP9 + df$GP10 +
@@ -49,14 +51,14 @@ for(i in 4:ncol(IgG_train)){
 
 mean_plasma = unlist(lapply(4:40, function(i) {mean(plasma_train[, i])}))
 sd_plasma = unlist(lapply(4:40, function(i) {sd(plasma_train[, i])}))
-mean_IgG = unlist(lapply(4:25, function(i) {mean(IgG_train[, i])}))
-sd_IgG = unlist(lapply(4:25, function(i) {sd(IgG_train[, i])}))
+mean_IgG = unlist(lapply(4:24, function(i) {mean(IgG_train[, i])}))
+sd_IgG = unlist(lapply(4:24, function(i) {sd(IgG_train[, i])}))
 
 
-plasma_train[, 4:39] = t(apply(plasma_train[, 4:40], 1, function(x) {(x - mean_plasma)/sd_plasma}))
-plasma_test[, 4:39] = t(apply(plasma_test[, 4:40], 1, function(x) {(x - mean_plasma)/sd_plasma}))
-IgG_train[, 4:25] = t(apply(IgG_train[, 4:25], 1, function(x) {(x - mean_IgG)/sd_IgG}))
-IgG_test[, 4:25] = t(apply(IgG_test[, 4:25], 1, function(x) {(x - mean_IgG)/sd_IgG}))
+plasma_train[, 4:40] = t(apply(plasma_train[, 4:40], 1, function(x) {(x - mean_plasma)/sd_plasma}))
+plasma_test[, 4:40] = t(apply(plasma_test[, 4:40], 1, function(x) {(x - mean_plasma)/sd_plasma}))
+IgG_train[, 4:24] = t(apply(IgG_train[, 4:24], 1, function(x) {(x - mean_IgG)/sd_IgG}))
+IgG_test[, 4:24] = t(apply(IgG_test[, 4:24], 1, function(x) {(x - mean_IgG)/sd_IgG}))
 
 
 
@@ -65,8 +67,11 @@ IgG_train = as.data.table(IgG_train)
 plasma_test = as.data.table(plasma_test)
 IgG_test = as.data.table(IgG_test)
 
+setwd("/mnt/polyomica/projects/GPD/peak_prediction")
 
 fwrite(plasma_train, "data/plasma_training_set_36peaks_2023_sex_age_IgGconcentration.csv")
 fwrite(IgG_train, "data/IgG_training_set_2023_sex_age_IgGconcentration.csv")
+fwrite(plasma_test, "data/plasma_test_set_36peaks_2023_sex_age_IgGconcentration.csv")
+fwrite(IgG_test, "data/IgG_test_set_2023_sex_age_IgGconcentration.csv")
 fwrite(plasma_test, "data/plasma_test_set_36peaks_2023_sex_age_IgGconcentration.csv")
 fwrite(IgG_test, "data/IgG_test_set_2023_sex_age_IgGconcentration.csv")
