@@ -13,21 +13,26 @@ plasma_test = as.data.frame(fread("plasma_test_set_36peaks_merge45_2023.csv"))
 IgG_test = as.data.frame(fread("IgG_test_set_merge45_2023.csv"))
 
 df = plasma_train
+df[,-(1:3)] = exp(df[,-(1:3)])
+
 denominator = df$GP1 + df$GP2 + df$GP3 + df$GP4 + df$GP5 + df$GP6 + df$GP7 + df$GP8 + df$GP9 + df$GP10 +
   df$GP11 + df$GP12 + df$GP13 + df$GP14 + df$GP15 + df$GP16 + df$GP17 + df$GP18 + df$GP19 + df$GP20 +
   df$GP21 + df$GP22 + df$GP23 + df$GP24 + df$GP25 + df$GP26 + df$GP27 + df$GP28 + df$GP29 + df$GP30 +
   df$GP31 + df$GP32 + df$GP33 + df$GP34 + df$GP35 + df$GP36
 nominator = df$GP1 + df$GP4 + df$GP5 + df$GP6 + 1/2*df$GP16
 df$GP37 = nominator/denominator
+df[,-(1:3)] = log(df[,-(1:3)])
 plasma_train = df
 
 df = plasma_test
+df[,-(1:3)] = exp(df[,-(1:3)])
 denominator = df$GP1 + df$GP2 + df$GP3 + df$GP4 + df$GP5 + df$GP6 + df$GP7 + df$GP8 + df$GP9 + df$GP10 +
   df$GP11 + df$GP12 + df$GP13 + df$GP14 + df$GP15 + df$GP16 + df$GP17 + df$GP18 + df$GP19 + df$GP20 +
   df$GP21 + df$GP22 + df$GP23 + df$GP24 + df$GP25 + df$GP26 + df$GP27 + df$GP28 + df$GP29 + df$GP30 +
   df$GP31 + df$GP32 + df$GP33 + df$GP34 + df$GP35 + df$GP36
 nominator = df$GP1 + df$GP4 + df$GP5 + df$GP6 + 1/2*df$GP16
 df$GP37 = nominator/denominator
+df[,-(1:3)] = log(df[,-(1:3)])
 plasma_test = df
 
 
