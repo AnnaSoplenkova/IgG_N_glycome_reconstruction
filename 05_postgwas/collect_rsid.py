@@ -7,7 +7,7 @@ with open('SNPs_in_LD_with_3_repl_SNPs.txt.tags', 'r') as required_rsid:
     list_rsid = [line.strip() for line in required_rsid]
   
     
-with open('1kg_503_eur_82M_ref.bim', mode='r') as in_file:
+with open('/home/common/DataStorage/1kg_503_EUR_82M_SNP_ref/1kg_503_eur_82M_ref.bim', mode='r') as in_file:
     for line in in_file:
         list_line = re.findall(r'\w+', line)
         if list_line[1] in list_rsid:
