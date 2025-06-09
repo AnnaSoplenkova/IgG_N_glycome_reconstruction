@@ -1,0 +1,52 @@
+#код для подготовки обработанных файлов к загрузке на сервер
+#рбрезаю по порогу r2>0.8
+
+setwd("/mnt/polyomica/projects/GPD/imputation_output/discovery/Korsula")
+
+names = list.files(pattern = "*_imputed.csv")
+
+listfiles = lapply(names, fread)
+
+for (i in 1:length(listfiles)) {
+  listfiles[[i]] = listfiles[[i]][listfiles[[i]]$r2.pred >= 0.8,]
+  fwrite(listfiles[[i]], paste0("/mnt/polyomica/projects/GPD/imputation_output/final/Korsula/", names[[i]]))
+}
+
+#listfiles[[i]][!is.na(listfiles[[i]]$Z_reimputed), ]
+
+setwd("/mnt/polyomica/projects/GPD/imputation_output/discovery/TwinsUK")
+
+names = list.files(pattern = "*_imputed.csv")
+
+listfiles = lapply(names, fread)
+
+for (i in 1:length(listfiles)) {
+  listfiles[[i]] = listfiles[[i]][listfiles[[i]]$r2.pred >= 0.8,]
+  fwrite(listfiles[[i]], paste0("/mnt/polyomica/projects/GPD/imputation_output/final/TwinsUK/", names[[i]]))
+}
+
+
+
+setwd("/mnt/polyomica/projects/GPD/imputation_output/discovery/Vis")
+
+names = list.files(pattern = "*_imputed.csv")
+
+listfiles = lapply(names, fread)
+
+for (i in 1:length(listfiles)) {
+  listfiles[[i]] = listfiles[[i]][listfiles[[i]]$r2.pred >= 0.8,]
+  fwrite(listfiles[[i]], paste0("/mnt/polyomica/projects/GPD/imputation_output/final/Vis/", names[[i]]))
+}
+
+
+
+setwd("/mnt/polyomica/projects/GPD/imputation_output/replication/ORCADES")
+
+names = list.files(pattern = "*_imputed.csv")
+
+listfiles = lapply(names, fread)
+
+for (i in 1:length(listfiles)) {
+  listfiles[[i]] = listfiles[[i]][listfiles[[i]]$r2.pred >= 0.8,]
+  fwrite(listfiles[[i]], paste0("/mnt/polyomica/projects/GPD/imputation_output/final/ORCADES/", names[[i]]))
+}
