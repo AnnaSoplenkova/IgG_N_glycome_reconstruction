@@ -196,7 +196,7 @@ plasma_train[,4:39] = log(plasma_train[,4:39])
 plasma_test[,4:39] = log(plasma_test[,4:39])
 
 derived_train = log(derived_train)
-derived_test = log(derived_train)
+derived_test = log(derived_test)
 
 
 names(plasma_train)[4:39] = c('PGP1', 'PGP2', 'PGP3', 'PGP4', 'PGP5', 'PGP6', 'PGP7', 'PGP8', 'PGP9', 'PGP10',
