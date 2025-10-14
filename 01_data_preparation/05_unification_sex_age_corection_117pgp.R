@@ -1,3 +1,4 @@
+#Тренировочный и тестовый набор правились каждый на свои параметры (среднее и сд)
 library(data.table)
 library(dplyr)
 
@@ -34,10 +35,16 @@ sd_plasma = unlist(lapply(4:120, function(i) {sd(plasma_train[, i])}))
 mean_IgG = unlist(lapply(4:25, function(i) {mean(IgG_train[, i])}))
 sd_IgG = unlist(lapply(4:25, function(i) {sd(IgG_train[, i])}))
 
-
 plasma_train[, 4:120] = t(apply(plasma_train[, 4:120], 1, function(x) {(x - mean_plasma)/sd_plasma}))
-plasma_test[, 4:120] = t(apply(plasma_test[, 4:120], 1, function(x) {(x - mean_plasma)/sd_plasma}))
 IgG_train[, 4:25] = t(apply(IgG_train[, 4:25], 1, function(x) {(x - mean_IgG)/sd_IgG}))
+
+
+mean_plasma = unlist(lapply(4:120, function(i) {mean(plasma_test[, i])}))
+sd_plasma = unlist(lapply(4:120, function(i) {sd(plasma_test[, i])}))
+mean_IgG = unlist(lapply(4:25, function(i) {mean(IgG_test[, i])}))
+sd_IgG = unlist(lapply(4:25, function(i) {sd(IgG_test[, i])}))
+
+plasma_test[, 4:120] = t(apply(plasma_test[, 4:120], 1, function(x) {(x - mean_plasma)/sd_plasma}))
 IgG_test[, 4:25] = t(apply(IgG_test[, 4:25], 1, function(x) {(x - mean_IgG)/sd_IgG}))
 
 
