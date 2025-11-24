@@ -1,7 +1,7 @@
 #создает IgG и plasma файлы с одинаковыми айдишниками и одинаковыми по структуре (ID, пол/позраст, пики)
 
 info<-readxl::read_excel('/home/common/projects/IgG_prediction_from_Plasma/data/Twins_Info.xlsx')
-igg<-data.table::fread('/mnt/polyomica/projects/GPD/training_set/QC_results/TrainIgG_QC/TrainIgG_QC_qced_glyco.csv')
+igg<-data.table::fread('/mnt/polyomica/projects/GPD/training_set/QC_results/TrainIgG_merge45_2025_QC/TrainIgG_merge45_2025_QC_qced_glyco.csv')
 plasma<-data.table::fread('/mnt/polyomica/projects/GPD/training_set/QC_results/TrainPlasma_QC/TrainPlasma_QC_qced_glyco.csv')
 plasma_ids<-data.table::fread('/home/common/projects/IgG_prediction_from_Plasma/data/TwinsLongitudinalPlasma_newIDs.txt')
 ind<-match(plasma$Sample, plasma_ids$random_ID)
@@ -45,10 +45,11 @@ igg$study_no<-info$STUDY_NO[ind2]
 igg$Sex<-info$Sex[ind2]
 igg$Age<-info$Age[ind2]
 
-res_table_igg<-igg[,c(1,29,30,6:27)]
+ncol(igg)
+res_table_igg<-igg[,c(1,28,29,6:26)]
 colnames(res_table_igg)[1]<-'ID'
 res_table_igg$ID<-as.numeric(res_table_igg$ID)
-data.table::fwrite(res_table_igg, '/mnt/polyomica/projects/GPD/training_set/IgG_training_set_2023.csv')
+data.table::fwrite(res_table_igg, '/mnt/polyomica/projects/GPD/training_set/IgG_training_set_merge45_2025.csv')
 ind3<-match(res_table$ID,res_table_igg$ID)
 #removing that are not matched
 res_table<-res_table[!is.na(ind3),]
@@ -58,7 +59,7 @@ res_table<-res_table[ind3,]
 data.table::fwrite(res_table, '/mnt/polyomica/projects/GPD/training_set/plasma_training_set_36peaks_2023.csv')
 colnames(res_table)<-paste0('Plasma_', colnames(res_table))
 colnames(res_table_igg)<-paste0('IgG_', colnames(res_table_igg))
-cor1<-cor(cbind(res_table[,4:(42-3)],res_table_igg[,4:25]))
+cor1<-cor(cbind(res_table[,4:(42-3)],res_table_igg[,4:24]))
 library(corrplot)
 png('/mnt/polyomica/projects/GPD/training_set/corr_heatmap.png')
 corrplot(cor1,tl.cex=0.5)
