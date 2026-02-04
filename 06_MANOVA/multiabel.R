@@ -7,3 +7,5 @@ data <- load.summary(
   indep.snps = indep.snps
 )
 result <- MultiSummary(data, type = "outbred")
+fwrite(result$scan, file = /mnt/polyomica/projects/GPD/01_manova/result_scan_16, sep = '\t')
+fwrite(result$coef, file = /mnt/polyomica/projects/GPD/01_manova/result_coef_16, sep = '\t')
