@@ -6,3 +6,4 @@ data <- load.summary(
            paste0("igp", c(1:15, 20), "_done.csv")), columnNames = c("rs_id", "ea", "ra", "eaf", "beta", "se", "n"),
   indep.snps = indep.snps
 )
+result <- MultiSummary(data, type = "outbred")
