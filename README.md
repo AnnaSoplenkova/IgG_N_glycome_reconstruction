@@ -12,18 +12,18 @@ This repository contains a pipeline for reconstructing immunoglobulin G (IgG) N-
 
 Raw glycomics processing. Harmonization produced 36 plasma glycan peaks (PGP) and 21 IgG glycan peaks (IGP). Per cohort: probabilistic median quotient normalization, batch correction, log-transform, outlier removal (outside Q1 − 3×IQR / Q3 + 3×IQR), sex/age adjustment, and standardization (mean 0, SD 1).
 
-### 02_peak_prediction
+### 02_peak_prediction:
 
 IgG N-glycome reconstruction. Linear models: OLS baseline, elastic net (lasso/ridge), L2-regularized Huber, Theil–Sen. Nonlinear models: random forest, gradient boosted tree + linear regression, TabNet.
 
-### 03_meta_analysis
+### 03_meta_analysis:
 
 Meta-analysis scripts. 
 
-### 04_validation
+### 04_validation:
 
 Validation benchmark. 
 
-### 05_postgwas
+### 05_postgwas:
 
 Gene prioritization. 
